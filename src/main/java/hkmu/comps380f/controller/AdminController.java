@@ -18,7 +18,8 @@ public class AdminController {
     public ModelAndView addUser(){
         return new ModelAndView("admin/add_user","userForm", new AddUserForm());
     }
-    @PostMapping("/add_book")
+
+    @PostMapping("/add_user")
     @GetMapping("/add_book")
     public String addBook(){
         return "admin/add_book";
@@ -36,8 +37,10 @@ public class AdminController {
         private String firstName;
         private String lastName;
         private String email;
-        private String  deliveryAddress;
+        private String deliveryAddress;
         private String password;
+        private String confirmPassword;
+        private String role;
 
         public String getUserName() {
             return userName;
@@ -85,6 +88,22 @@ public class AdminController {
 
         public void setPassword(String password) {
             this.password = password;
+        }
+
+        public String getConfirmPassword() {
+            return confirmPassword;
+        }
+
+        public void setConfirmPassword(String confirmPassword) {
+            this.confirmPassword = confirmPassword;
+        }
+
+        public String getRole() {
+            return role;
+        }
+
+        public void setRole(String role) {
+            this.role = role;
         }
     }
 }
