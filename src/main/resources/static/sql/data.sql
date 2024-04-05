@@ -1,0 +1,2 @@
+INSERT INTO users(delivery_address,email,first_name,last_name,password,username) VALUES
+                                                                                     ('HKMU','HKMU@gmail.com','ky','ng','{noop}kennethpw','kenneth');
