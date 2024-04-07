@@ -21,9 +21,7 @@ public class Book {
     @Basic(fetch = FetchType.LAZY)
     @Lob
     private byte[] coverPhoto;
-    private boolean availability = true;
-    @OneToOne(mappedBy = "book")
-    private CartItem cartItem; //relationship
+    private boolean availability;
     @OneToMany(mappedBy = "book", fetch = FetchType.EAGER,
             cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
@@ -79,17 +77,12 @@ public class Book {
     public boolean isAvailability() {
         return availability;
     }
+    public String getAvailability(){
+        return String.valueOf(availability);
+    }
 
     public void setAvailability(boolean availability) {
         this.availability = availability;
-    }
-
-    public CartItem getCartItem() {
-        return cartItem;
-    }
-
-    public void setCartItem(CartItem cartItem) {
-        this.cartItem = cartItem;
     }
 
     public List<Comment> getComments() {

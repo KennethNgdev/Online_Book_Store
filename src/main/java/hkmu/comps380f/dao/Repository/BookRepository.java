@@ -1,7 +1,7 @@
 package hkmu.comps380f.dao.Repository;
 
-import hkmu.comps380f.model.User;
+import hkmu.comps380f.model.Book;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface BookRepository extends JpaRepository<Book, Long> {
 }

@@ -18,7 +18,7 @@ public class Comment {
     private long userID; //foreign key
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user; //relationship
+    private AppUser appUser; //relationship
 
     public long getCommentId() {
         return commentId;
@@ -60,11 +60,11 @@ public class Comment {
         this.userID = userID;
     }
 
-    public User getUser() {
-        return user;
+    public AppUser getUser() {
+        return appUser;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(AppUser appUser) {
+        this.appUser = appUser;
     }
 }

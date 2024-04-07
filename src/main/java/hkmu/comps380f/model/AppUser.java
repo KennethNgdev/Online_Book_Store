@@ -3,13 +3,17 @@ package hkmu.comps380f.model;
 import jakarta.persistence.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class AppUser{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
@@ -18,17 +22,16 @@ public class User {
     @Column(name = "first_name")
     private String firstName;
     @Column(name = "last_name")
-    private String LastName;
+    private String lastName;
     private String email;
     private String password;
     @Column(name = "delivery_address")
     private String deliveryAddress;
-    @OneToOne(mappedBy = "user")
-    private Admin admin; //relationship
-    @OneToOne(mappedBy = "user")
-    private ShoppingCart shoppingCart; //relationship
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER,
+    @OneToMany(mappedBy = "appUser", fetch = FetchType.EAGER,
             cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Role> roles = new ArrayList<>(); //relationship
+            @OneToMany(mappedBy = "appUser", fetch = FetchType.EAGER,
+                    cascade = CascadeType.ALL, orphanRemoval = true)
     @Fetch(FetchMode.SUBSELECT)
     private List<Comment> comments = new ArrayList<>(); //relationship
 
@@ -57,11 +60,11 @@ public class User {
     }
 
     public String getLastName() {
-        return LastName;
+        return lastName;
     }
 
     public void setLastName(String lastName) {
-        LastName = lastName;
+        this.lastName = lastName;
     }
 
     public String getEmail() {
@@ -88,20 +91,12 @@ public class User {
         this.deliveryAddress = deliveryAddress;
     }
 
-    public Admin getAdmin() {
-        return admin;
+    public List<Role> getRoles() {
+        return roles;
     }
 
-    public void setAdmin(Admin admin) {
-        this.admin = admin;
-    }
-
-    public ShoppingCart getShoppingCart() {
-        return shoppingCart;
-    }
-
-    public void setShoppingCart(ShoppingCart shoppingCart) {
-        this.shoppingCart = shoppingCart;
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
     }
 
     public List<Comment> getComments() {
