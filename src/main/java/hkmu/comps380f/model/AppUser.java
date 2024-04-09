@@ -30,10 +30,15 @@ public class AppUser{
     @OneToMany(mappedBy = "appUser", fetch = FetchType.EAGER,
             cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Role> roles = new ArrayList<>(); //relationship
-            @OneToMany(mappedBy = "appUser", fetch = FetchType.EAGER,
+    @OneToMany(mappedBy = "appUser", fetch = FetchType.EAGER,
                     cascade = CascadeType.ALL, orphanRemoval = true)
     @Fetch(FetchMode.SUBSELECT)
     private List<Comment> comments = new ArrayList<>(); //relationship
+
+    @OneToMany(mappedBy = "appUser", fetch = FetchType.EAGER,
+            cascade = CascadeType.ALL, orphanRemoval = true)
+    @Fetch(FetchMode.SUBSELECT)
+    private List<Order> orders = new ArrayList<>();
 
     public long getUserId() {
         return userId;
@@ -105,5 +110,17 @@ public class AppUser{
 
     public void setComments(List<Comment> comments) {
         this.comments = comments;
+    }
+
+    public List<String> getRolesName(){
+        List<String> name = new ArrayList<>();
+        for (Role role : this.roles) {
+            name.add(role.getRoleName());
+        }
+        return name;
+    }
+
+    public void addRole(Role role){
+        this.roles.add(role);
     }
 }

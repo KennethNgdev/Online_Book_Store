@@ -1,10 +1,24 @@
 <html>
 <head>
     <title>Book Information</title>
-
 </head>
 <body>
 <h2>Information</h2>
+<c:url var="shoppingCartUrl" value='/user/cart' />
+<a href="${shoppingCartUrl}"/>shopping cart</a><br>
+<c:choose>
+    <c:when test="${!pageContext.request.isUserInRole('ROLE_ADMIN') || !pageContext.request.isUserInRole('ROLE_USER')}">
+        <a href="<c:url value="/login"/>">login</a><br><br>
+    </c:when>
+    <c:otherwise>
+        <form action="<c:url value="/logout"/>" method="post">
+            <input type="submit" value="Logout" />
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+        </form>
+    </c:otherwise>
+</c:choose>
+<c:url var="listUrl" value="/book"/>
+<a href="${listUrl}">back</a>
 <div  class="book-container">
     <div class="book-name">
         <p >${bookWithImageData.book.bookName}</p>
@@ -19,9 +33,22 @@
     <div class="book-price">
         <p>HK$${bookWithImageData.book.price}</p>
     </div>
-    <div class="add-to-cart">
-        <a href="<c:url value='addCart/${bookWithImageData.book.bookId}'/>" >Add to cart</a>
+    <div>
+        <p>availability: ${bookWithImageData.book.availability}</p>
     </div>
+
+    <c:choose>
+    <c:when test="${bookWithImageData.book.availability eq 'true'}">
+        <div class="add-to-cart">
+            <select id="quantitySelect" name="quantity" onchange="updateAddToCartUrl()">
+                <c:forEach begin="1" end="10" var="i">
+                    <option value="${i}">${i}</option>
+                </c:forEach>
+            </select>
+            <a id="addToCartLink" href="/app/book/addToCart/${bookId}?quantity=1" onclick="addToCart()">Add to Cart</a>
+        </div>
+    </c:when>
+    </c:choose>
 </div>
 <div class="comment-container">
     <div class="comment-header">
@@ -35,14 +62,9 @@
         <c:otherwise>
             <c:forEach items="${bookWithImageData.book.comments}" var="comment">
                 <div class="comment">
-                    <c:choose>
-                        <c:when test="${pageContext.request.isUserInRole('admin')}">
-                            <div class="comment-user-name"><p>${comment.user.username} (admin)</p></div>
-                        </c:when>
-                        <c:otherwise>
-                            <div class="comment-user-name"><p>${comment.user.username} (user)</p></div>
-                        </c:otherwise>
-                    </c:choose>
+
+                    <div class="comment-user-name"><p>${comment.user.username} </p></div>
+
                     <div class="comment-user"><p>${comment.context}</p></div>
                 </div>
             </c:forEach>
@@ -50,22 +72,32 @@
     </c:choose>
 
     <div class="comment-input">
-        <div class="comment-user-name"><p>username</p></div>
+        <c:choose>
+            <c:when test="${empty pageContext.request.remoteUser}">
+                <div class="comment-user-name"><p>username</p></div>
+            </c:when>
+            <c:otherwise>
+                <div class="comment-user-name"><p>${pageContext.request.remoteUser}</p></div>
+            </c:otherwise>
+        </c:choose>
+
         <div class="user-input">
             <div id="comment-area">
                 <c:choose>
-                    <c:when test="${pageContext.request.isUserInRole('admin') || pageContext.request.isUserInRole('user')}">
+                    <c:when test="${not empty pageContext.request.remoteUser}">
                         <div><p>Add comment</p></div>
                         <form:form method="post" modelAttribute="newUserComment">
+                            <form:input type="text" path="username" hidden="hidden" value="${pageContext.request.remoteUser}"/>
                             <form:textarea path="context" id="comment-input" rows="4" cols="50" placeholder="Write your comment here..."/>
-                            <input type="submit" value="submit" id="submit-comment" disabled>
+                            <input type="submit" value="submit" id="submit-comment">
                         </form:form>
                     </c:when>
                     <c:otherwise>
                         <div><p>You need to login to add a comment</p></div>
                         <form:form method="post" modelAttribute="newUserComment">
+                            <form:input type="text" path="username" hidden="hidden" value="${pageContext.request.remoteUser}"/>
                             <form:textarea path="context" id="comment-input" rows="4" cols="50" placeholder="Write your comment here..."/>
-                            <input type="submit" value="submit" id="submit-comment" disabled>
+                            <input type="submit" value="submit" id="submit-comment" disabled >
                         </form:form>
                     </c:otherwise>
                 </c:choose>
@@ -74,6 +106,22 @@
     </div>
 </div>
 </body>
+<script>
+    function updateAddToCartUrl() {
+        var selectElement = document.getElementById("quantitySelect");
+        var quantity = selectElement.value;
+        var addToCartLink = document.getElementById("addToCartLink");
+        var currentUrl = addToCartLink.getAttribute("href");
+        var updatedUrl = currentUrl.split("?")[0] + "?quantity=" + quantity;
+        addToCartLink.setAttribute("href", updatedUrl);
+    }
+
+    function addToCart() {
+        var addToCartLink = document.getElementById("addToCartLink");
+        var updatedUrl = addToCartLink.getAttribute("href");
+        window.location.href = updatedUrl;
+    }
+</script>
 <style>
     .book-cover {
         margin-top: 10px;
@@ -86,6 +134,7 @@
         align-items: center;
         text-align: center;
         margin-bottom: 20px;
+        margin-top: 20px;
         width: 230px;
         height: auto;
         border: 1px solid black;

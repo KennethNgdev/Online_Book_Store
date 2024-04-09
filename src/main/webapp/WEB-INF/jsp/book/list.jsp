@@ -2,7 +2,20 @@
 <html>
 <head><title>Online Book Store</title></head>
 <body>
-    <h1>Welcome user</h1>
+    <h1>Welcome</h1>
+    <c:url var="shoppingCartUrl" value='/user/cart' />
+    <a href="${shoppingCartUrl}">shopping cart</a><br>
+    <c:choose>
+    <c:when test="${!pageContext.request.isUserInRole('ROLE_USER')}">
+    <a href="<c:url value="/login"/>">login</a><br>
+    </c:when>
+    <c:otherwise>
+    <form action="<c:url value="/logout"/>" method="post">
+        <input type="submit" value="Logout" />
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+    </form>
+    </c:otherwise>
+    </c:choose>
     <h2>Books</h2>
     <c:choose>
         <c:when test="${empty booksWithImageData}">
@@ -10,10 +23,8 @@
         </c:when>
         <c:otherwise>
         <c:forEach items="${booksWithImageData}" var="bookWithImageData">
-        <c:choose>
-        <c:when test="${bookWithImageData.book.availability eq 'true'}">
         <div  class="book-container">
-            <a href="<c:url value="book/info/${bookWithImageData.book.bookId}"/>">
+            <a href="<c:url value="/book/info/${bookWithImageData.book.bookId}"/>">
 
                 <img src="data:image/jpeg;base64,${bookWithImageData.imageData}" alt="Book Cover" class="book-cover">
             </a>
@@ -25,13 +36,11 @@
                 <div class="book-price">
                     <p >HK$${bookWithImageData.book.price}</p>
                 </div>
-                <div class="add-to-cart">
-                    <a href="<c:url value='addCart/${bookWithImageData.book.bookId}'/>" >Add to cart</a>
+                <div>
+                    <p>availability: ${bookWithImageData.book.availability}</p>
                 </div>
             </div>
         </div>
-        </c:when>
-        </c:choose>
         </c:forEach>
     </c:otherwise>
     </c:choose>
@@ -58,17 +67,5 @@
         font-weight: bold;
     }
 
-    .add-to-cart {
-        display: inline-block;
-        padding: 5px 5px;
-        background-color: #7cd2ff;
-        color: #fff;
-        text-decoration: none;
-        transition: background-color 0.3s;
-        margin-bottom: 10px;
-    }
-    .add-to-cart:hover {
-        background-color: #3498db;
-    }
 </style>
 </html>

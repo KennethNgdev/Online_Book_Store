@@ -1,6 +1,9 @@
 package hkmu.comps380f.model;
 
 import jakarta.persistence.*;
+import org.antlr.v4.runtime.atn.SemanticContext;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +28,9 @@ public class Book {
     @OneToMany(mappedBy = "book", fetch = FetchType.EAGER,
             cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
+    @OneToMany(mappedBy = "book", fetch = FetchType.EAGER,
+            cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderItem> orderItems = new ArrayList<>();
 
     public long getBookId() {
         return bookId;
